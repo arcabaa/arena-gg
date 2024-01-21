@@ -1,22 +1,28 @@
 <!DOCTYPE html>
 
 <html lang="en">
-    <head>
-        <meta charset="utf-8" />
+  <head>
+    <meta charset="utf-8" />
+    <link rel="stylesheet" href="index.css" />
 
-        <title>cs.gg</title>
-        <meta name="description" content="cs.gg" />
-        <meta name="author" content="Alden Peffer" />
-    </head>
+    <title>cs.gg</title>
+    <meta name="description" content="arena.gg" />
+  </head>
 
-    <body style="margin: 0 auto; width: 100%; height: 100vh">
-        <div style="height: 5%"></div>
-        <div id="cs-canvas-container" style="margin: 0 auto; width: 80%; height: 80%">
-            <canvas width="1000px" height="700px" id="cs-canvas" style="background-color: #c9c9c9"></canvas>
-        </div>
-    </body>
+  <body style="margin: 0 auto; width: 100%; height: 100vh">
+    <div class="game-container">
+      <div id="cs-canvas-container">
+        <canvas width="1200px" height="800px" id="cs-canvas" style="background-color: #c9c9c9"></canvas>
+      </div>
+      <div class="item-container">
+        <ol>
+          <li>item 1</li>
+        </ol>
+      </div>
+    </div>
+  </body>
 
-    <footer>
-        <script src="./bundle.js"></script>
-    </footer>
+  <footer>
+    <script src="./bundle.js"></script>
+  </footer>
 </html>
