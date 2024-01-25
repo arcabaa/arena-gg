@@ -5,7 +5,6 @@ const canvas = document.getElementById("cs-canvas") as HTMLCanvasElement
 const context = canvas.getContext("2d") as CanvasRenderingContext2D
 const playerImage = document.createElement("img")
 playerImage.src = "fizz.jpg" // todo: replace?
-const fps = 100
 
 const gameState: GameState = {
   player: createPlayer(),
@@ -22,10 +21,12 @@ function createPlayer() {
     attackSpeed: 0.89,
     armor: 0,
     magicResist: 0,
-    movementSpeed: 4,
+    movementSpeed: 2.5,
     maxHealth: 100,
     health: 100,
+    canAttack: true,
   }
+
   return CreatureFactory.get().newCreature(playerStats, 300).withRectangleCollider(0, 0, 75, 75).build()
 }
 
@@ -39,6 +40,7 @@ function createMinion(x: number, y: number) {
     movementSpeed: 2,
     maxHealth: 500,
     health: 500,
+    canAttack: true,
   }
   return CreatureFactory.get().newCreature(minionStats, 16).withRectangleCollider(x, y, 55, 55).build()
 }
@@ -55,9 +57,7 @@ function start() {
 function gameLoop() {
   update()
   render()
-  setTimeout(() => {
-    requestAnimationFrame(gameLoop)
-  }, 1000 / fps)
+  requestAnimationFrame(gameLoop)
 }
 
 function render() {
@@ -175,18 +175,38 @@ function init() {
   })
 }
 
+function calculateAutoAttackDelay(): number {
+  let attackSpeed = Math.max(0.01, Math.min(2.5, gameState.player.baseStats.attackSpeed))
+  let attackDelay = 1000 / attackSpeed
+  return attackDelay
+}
+
+function autoAttackCooldown(): void {
+  setTimeout(() => {
+    gameState.player.baseStats.canAttack = true
+  }, calculateAutoAttackDelay())
+}
+
 function handleClick(x: number, y: number, type: "left" | "right" | "other") {
   const { player } = gameState
 
-  if (type === "right") {
-    const minion = getClickedMinion(x, y)
-    if (minion !== null && minion.baseStats.health !== 0) {
-      autoAttackMinion(player.collider.getCenterCoordinates(), minion, player.autoAttack())
-    } else {
-      player.moveTo(x, y)
-    }
-  } else if (type === "left") {
-    addMinion(x, y)
+  switch (type) {
+    case "right":
+      const minion = getClickedMinion(x, y)
+      if (minion !== null && minion.baseStats.health !== 0) {
+        if (player.baseStats.canAttack) {
+          autoAttackMinion(player.collider.getCenterCoordinates(), minion, player.autoAttack())
+          player.baseStats.canAttack = false
+          autoAttackCooldown()
+        } else {
+          gameState.player.stopMovement()
+        }
+      } else {
+        player.moveTo(x, y)
+      }
+      break
+    case "left":
+      addMinion(x, y)
   }
 }
 

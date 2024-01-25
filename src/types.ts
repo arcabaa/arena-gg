@@ -80,6 +80,7 @@ interface Stats {
   armor: number
   magicResist: number
   attackSpeed: number
+  canAttack: boolean
   // TODO:
   // research all possible stats
   // attack speed, crit chance, crit dmg, mp5, hp5
